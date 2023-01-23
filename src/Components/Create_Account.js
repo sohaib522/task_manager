@@ -7,8 +7,13 @@ import { Grid,  TextField } from "@mui/material";
 import { auth } from './Firebase_setup';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
+import Stack from '@mui/material/Stack';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 export default function Create_Account() {
+  const [show, setshow] = React.useState(false);
+  const [errorMessage,SeterrorMessage]=useState('')
   const navigate=useNavigate();
   const [values,setvalues]=useState(
     {
@@ -30,6 +35,9 @@ export default function Create_Account() {
     boxShadow: 24,
     p: 4,
   };
+  const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+  })
  
  
    const  Signup=(email,password)=> {
@@ -44,6 +52,8 @@ export default function Create_Account() {
     .catch((error) => {
       const errorCode = error.code;
       const errorMessage = error.message;
+      SeterrorMessage(error.message)
+      setshow(true);
       // ..
     });
   }
@@ -55,6 +65,13 @@ const handlechange=(event)=>{
   setvalues({...values,[name] : value})
    
 }
+const handleClosed = (event, reason) => {
+  if (reason === "clickaway") {
+    return
+  }
+
+  setshow(false)
+}
 
 
 const handleSubmit=(event)=>
@@ -65,6 +82,9 @@ const handleSubmit=(event)=>
 }
   return (
     <div>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClosed}>
+       <Alert severity="error">{errorMessage}</Alert>
+      </Snackbar>
         <Button variant="contained" onClick={handleOpen}>Create New Account</Button>
 <Modal
   open={open}

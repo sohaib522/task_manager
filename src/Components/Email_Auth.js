@@ -9,15 +9,27 @@ import Create_Account from "./Create_Account";
 import { useNavigate} from "react-router-dom";
 import { auth } from "./Firebase_setup";
 import { signOut } from "firebase/auth";
+import Stack from '@mui/material/Stack';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 
 export default function Email_Auth() {
+  const [open, setOpen] = React.useState(false);
+  const [errorMessage,SeterrorMessage]=useState('')
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
   const navigate=useNavigate();
   const [values,setvalues]=useState(
     {
         password : " ",
         email : " "
     })
+    const handleClick = () => {
+     
+    };
  
     const handlechange=(event)=>{
       let name ,value;
@@ -32,14 +44,6 @@ export default function Email_Auth() {
         navigate("/user",{state :{current_user : user.uid}})
     }})
     },[])
-   /* signInWithEmailAndPassword(auth,"sumbulqureshi@gmail.com","sohaib")
-  .then((userCredential) => {
-    
-    const user = userCredential.user;
-    console.log(user)
-    // ...
-  })
-  */
   
     
     const handleSubmit=(event)=>
@@ -52,8 +56,22 @@ signInWithEmailAndPassword(auth,values.email,values.password)
     
     // ...
   })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    SeterrorMessage(error.message)
+    setOpen(true);
+
+  });
 
 
+}
+const handleClose = (event, reason) => {
+  if (reason === "clickaway") {
+    return
+  }
+
+  setOpen(false)
 }
 
 const logout=()=>{
@@ -64,32 +82,7 @@ const logout=()=>{
   });
 
 }
-   /* const auth = getAuth();
-signInWithEmailAndPassword(auth,"sohaib429@gmail.com", "sohaiblucky777")
-  .then((userCredential) => {
-    // Signed in 
-    const user = userCredential.user;
-    console.log(user)
-    // ...
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-  })
-*/
-/*createUserWithEmailAndPassword(auth, "Ahmadnadeem1234@gmail.com", '123456')
-  .then((userCredential) => {
-    // Signed in 
-    const user = userCredential.user;
-    navigate("/user",{state : {current_user : user.uid}})
-    // ...
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // ..
-  });
-   */
+  
 
   return (
     <div>
@@ -100,6 +93,9 @@ signInWithEmailAndPassword(auth,"sohaib429@gmail.com", "sohaiblucky777")
        <br/>
        <br/>
        <br/>
+       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+       <Alert severity="error">{errorMessage}</Alert>
+      </Snackbar>
        <form onSubmit={handleSubmit} >
        <Grid container display="flex" direction="column" align="center" spacing={8}>
         <Grid item >
@@ -108,7 +104,7 @@ signInWithEmailAndPassword(auth,"sohaib429@gmail.com", "sohaiblucky777")
       </Typography>
         </Grid>
         <Grid item >
-      <TextField onChange={handlechange} value={values.email} type="email" id="email" label="Email" variant="outlined" name="email" />
+      <TextField sx={{width : "300000"}} onChange={handlechange} value={values.email} type="email" id="email" label="Email" variant="outlined" name="email" />
       </Grid>
       <Grid item>
       <TextField onChange={handlechange} value={values.password} type="password" id="password" label="Password" variant="outlined" name="password" />
