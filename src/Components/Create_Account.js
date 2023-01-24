@@ -10,16 +10,18 @@ import { useNavigate } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import { useFormik } from "formik";
+import { Sign_in_schema } from "./Schemas";
 
 export default function Create_Account() {
   const [show, setshow] = React.useState(false);
   const [errorMessage,SeterrorMessage]=useState('')
   const navigate=useNavigate();
-  const [values,setvalues]=useState(
+  const initialValues=
     {
         password : " ",
         email : " "
-    })
+    }
     const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -58,13 +60,7 @@ export default function Create_Account() {
     });
   }
 
-const handlechange=(event)=>{
-  let name ,value;
-  name=event.target.name
-  value=event.target.value
-  setvalues({...values,[name] : value})
-   
-}
+
 const handleClosed = (event, reason) => {
   if (reason === "clickaway") {
     return
@@ -74,12 +70,21 @@ const handleClosed = (event, reason) => {
 }
 
 
-const handleSubmit=(event)=>
-{
-  event.preventDefault();
- Signup(values.email,values.password)
-
-}
+const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
+useFormik({
+  initialValues,
+  validationSchema: Sign_in_schema,
+  validateOnChange: true,
+  validateOnBlur: false,
+  //// By disabling validation onChange and onBlur formik will validate on submit.
+  onSubmit: (values, action) => {
+    console.log("🚀 ~ file: App.jsx ~ line 17 ~ App ~ values", values);
+    //// to get rid of all the values after submitting the form
+   ;
+   Signup(values.email,values.password)
+    action.resetForm();
+  },
+});
   return (
     <div>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClosed}>
@@ -108,10 +113,16 @@ const handleSubmit=(event)=>
       </Typography>
         </Grid>
         <Grid item >
-      <TextField name='email' onChange={handlechange} value={values.email} type="email" id="email" label="Email" variant="outlined" />
+      <TextField name='email' onChange={handleChange}  value={values.email} type="email" id="email" label="Email" variant="outlined" />
+      {touched.email && errors.email ? (
+                      <p className="form-error">{errors.email}</p>
+                    ) : null}
       </Grid>
       <Grid item>
-      <TextField name='password' onChange={handlechange} value={values.password} type="password" id="password" label="Password" variant="outlined" />
+      <TextField name='password' onChange={handleChange}  value={values.password} type="password" id="password" label="Password" variant="outlined" />
+      {touched.password && errors.password ? (
+                      <p className="form-error">{errors.password}</p>
+                    ) : null}
       </Grid>
 
         <Grid item >

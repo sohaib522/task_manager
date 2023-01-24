@@ -12,6 +12,8 @@ import { signOut } from "firebase/auth";
 import Stack from '@mui/material/Stack';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import { useFormik } from "formik";
+import { Sign_in_schema } from "./Schemas";
 
 
 export default function Email_Auth() {
@@ -22,33 +24,22 @@ const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
 })
   const navigate=useNavigate();
-  const [values,setvalues]=useState(
+  const initialValues=
     {
         password : " ",
         email : " "
-    })
-    const handleClick = () => {
-     
-    };
- 
-    const handlechange=(event)=>{
-      let name ,value;
-      name=event.target.name
-      value=event.target.value
-      setvalues({...values,[name] : value})
-       
     }
-    useEffect(()=>{
-      auth.onAuthStateChanged(user=>{
-        if(user){
-        navigate("/user",{state :{current_user : user.uid}})
-    }})
-    },[])
-  
-    
-    const handleSubmit=(event)=>
-{
- event.preventDefault();
+    const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
+    useFormik({
+      initialValues,
+      validationSchema: Sign_in_schema,
+      validateOnChange: true,
+      validateOnBlur: false,
+      //// By disabling validation onChange and onBlur formik will validate on submit.
+      onSubmit: (values, action) => {
+        console.log("🚀 ~ file: App.jsx ~ line 17 ~ App ~ values", values);
+        //// to get rid of all the values after submitting the form
+       ;
 signInWithEmailAndPassword(auth,values.email,values.password)
   .then((userCredential) => {
   const user = userCredential.user;
@@ -63,9 +54,19 @@ signInWithEmailAndPassword(auth,values.email,values.password)
     setOpen(true);
 
   });
+        action.resetForm();
+      },
+    });
+    
+    useEffect(()=>{
+      auth.onAuthStateChanged(user=>{
+        if(user){
+        navigate("/user",{state :{current_user : user.uid}})
+    }})
+    },[])
+  
+    
 
-
-}
 const handleClose = (event, reason) => {
   if (reason === "clickaway") {
     return
@@ -104,10 +105,16 @@ const logout=()=>{
       </Typography>
         </Grid>
         <Grid item >
-      <TextField sx={{width : "300000"}} onChange={handlechange} value={values.email} type="email" id="email" label="Email" variant="outlined" name="email" />
+      <TextField sx={{width : "3"}} onChange={handleChange}  onBlur={handleBlur} value={values.email} type="email" id="email" label="Email" variant="outlined" name="email" />
+      {touched.email && errors.email ? (
+                      <p className="form-error">{errors.email}</p>
+                    ) : null}
       </Grid>
       <Grid item>
-      <TextField onChange={handlechange} value={values.password} type="password" id="password" label="Password" variant="outlined" name="password" />
+      <TextField onChange={handleChange} onBlur={handleBlur} value={values.password} type="password" id="password" label="Password" variant="outlined" name="password" />
+      {touched.password && errors.password ? (
+                      <p className="form-error">{errors.password}</p>
+                    ) : null}
       </Grid>
 
         <Grid item >

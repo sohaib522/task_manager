@@ -11,12 +11,14 @@ import {  ref, set } from "firebase/database";
 import {v4 as uuid} from 'uuid'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import {Grid} from '@mui/material';
 export default function To_do(props) {
   const [Date_time,setDate_time]=useState('2022-12-18T21:11:54')
     const [Task,setTask]=useState({
         title : '',
         description : '',
-        status : 'incomplete' 
+        status : 'incomplete', 
+        creation_date : new Date()
         
 
     })
@@ -76,11 +78,14 @@ export default function To_do(props) {
   aria-labelledby="modal-modal-title"
   aria-describedby="modal-modal-description"
 >
+  <Grid container display="column" spacing={14} >
 <form onSubmit={handlesubmit}>
   <Box sx={style}>
-      
-  <TextField  id="title" name="title" label="Title" variant="outlined"  onChange={handlechange}   />
-  <TextField
+      <Grid item>
+      <TextField  id="title" name="title" label="Title" variant="outlined"  onChange={handlechange}   />
+      </Grid>
+      <Grid item>
+      <TextField
           id="description"
           name="description"
           label="Description"
@@ -88,7 +93,10 @@ export default function To_do(props) {
           maxRows={4}
           onChange={handlechange}
         />
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+      </Grid>
+      <Grid item>
+        
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
            <DateTimePicker
           label="Date&Time picker"
           name="date_time"
@@ -97,10 +105,15 @@ export default function To_do(props) {
           renderInput={(params) => <TextField {...params} />}
         />
         </LocalizationProvider>
-   <Button type="submit" onClick={handlesubmit}>Add task</Button>
+      </Grid>
+      <Grid item><Button type="submit" onClick={handlesubmit}>Add task</Button></Grid>
+    
+  
+  
+   
   </Box>
 </form>
-        
+</Grid>     
 </Modal>
     </div>
   )
