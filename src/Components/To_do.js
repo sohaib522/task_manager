@@ -12,8 +12,13 @@ import {v4 as uuid} from 'uuid'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import {Grid} from '@mui/material';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 export default function To_do(props) {
   const [Date_time,setDate_time]=useState('2022-12-18T21:11:54')
+  const [show, setshow] = React.useState(false);
+  const [errorMessage,SeterrorMessage]=useState('')
+  const [error_state,SetErrorState]=useState(null)
     const [Task,setTask]=useState({
         title : '',
         description : '',
@@ -28,6 +33,7 @@ export default function To_do(props) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
     const style = {
+        margin : "30",
         position: 'absolute',
         top: '50%',
         left: '50%',
@@ -51,7 +57,17 @@ export default function To_do(props) {
         Description : Task.description, 
         id : Task.id ,
         status : Task.status,
-        Datetime : Task.Date_time    });
+        Datetime : Task.Date_time 
+        
+         }).then(() => {
+          SetErrorState(false)
+          // Data saved successfully!
+        })
+        .catch((error) => {
+          SeterrorMessage(error)
+          SetErrorState(true)
+          // The write failed...
+        });
         console.log ("The new values are : ")
     }
     const handlechange=(event)=>
@@ -61,15 +77,27 @@ export default function To_do(props) {
       name=event.target.name
       value=event.target.value
            setTask({...Task,[name] : value})
-     
+    }
+    const handleClosed = (event, reason) => {
+      if (reason === "clickaway") {
+        return
+      }
+    
+      setshow(false)
     }
     const handledate=(date)=>{
      
      setDate_time(date)
 
     }
+    const Alert = React.forwardRef(function Alert(props, ref) {
+      return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+    })
   return (
     <div>
+       
+
+
       
         <Button onClick={handleOpen}>Add task</Button>
 <Modal
@@ -78,14 +106,20 @@ export default function To_do(props) {
   aria-labelledby="modal-modal-title"
   aria-describedby="modal-modal-description"
 >
-  <Grid container display="column" spacing={14} >
+  
 <form onSubmit={handlesubmit}>
   <Box sx={style}>
-      <Grid item>
-      <TextField  id="title" name="title" label="Title" variant="outlined"  onChange={handlechange}   />
-      </Grid>
-      <Grid item>
-      <TextField
+  <Grid container display="flex" direction="column" align="center" spacing={4}>
+    <Grid item>
+    <Typography variant="h5" gutterBottom>
+        Add a Task
+      </Typography>
+    </Grid>
+    <Grid item>
+    <TextField  id="title" name="title" label="Title" variant="outlined"  onChange={handlechange}/>
+    </Grid>
+    <Grid item>
+    <TextField
           id="description"
           name="description"
           label="Description"
@@ -93,10 +127,9 @@ export default function To_do(props) {
           maxRows={4}
           onChange={handlechange}
         />
-      </Grid>
-      <Grid item>
-        
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+    </Grid>
+    <Grid item>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
            <DateTimePicker
           label="Date&Time picker"
           name="date_time"
@@ -105,16 +138,15 @@ export default function To_do(props) {
           renderInput={(params) => <TextField {...params} />}
         />
         </LocalizationProvider>
+    </Grid>
+      <Grid item>
+      <Button type="submit" onClick={handlesubmit}>Add task</Button>
       </Grid>
-      <Grid item><Button type="submit" onClick={handlesubmit}>Add task</Button></Grid>
-    
-  
-  
-   
+      </Grid>
   </Box>
-</form>
-</Grid>     
+</form>    
 </Modal>
+
     </div>
   )
 }

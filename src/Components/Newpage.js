@@ -16,6 +16,7 @@ import {  ref, set,onValue,child,get, update } from "firebase/database";
 import { Navbar } from 'react-bootstrap';
 
 export default function Newpage () {
+  const [username,Setusername]=useState('')
   const tempi=[10,20,30,40,50,60]
   const [to_dos,setto_dos]=useState([])
   const temp=[];
@@ -30,11 +31,20 @@ export default function Newpage () {
     });
     
 
-
   }
-  const update_progress_task=(id)=>{
+ 
+useEffect(()=>{
+  const starCountRef = ref(database, 'Users/' + userid);
+  onValue(starCountRef, (snapshot) => {
+    const data = snapshot.val();
 
-  }
+    Setusername(data.Name)
+   
+  
+  });
+},[])
+
+  
   useEffect(()=>{
     
     const dbRef = ref(database);
@@ -56,12 +66,13 @@ export default function Newpage () {
     });
 
   },[])
+  
   const component=to_dos.map((c,i)=> <Cardview_Todos key={i} Title={c.Title} Description={c.Description} 
-  Datetime={c.Datetime} status={c.status} id={c.id}/>)
+  Datetime={c.Datetime} status={c.status} id={c.id} />)
 
   return (
     <div>
-      <Navbar_inapp signout={logout}/>
+      <Navbar_inapp signout={logout} username={username}/>
       <h1>{userid}</h1>
       <button onClick={logout}>Sign out</button>
       <To_do current_user={userid}/>

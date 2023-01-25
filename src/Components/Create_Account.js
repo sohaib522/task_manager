@@ -4,6 +4,8 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Grid,  TextField } from "@mui/material";
+import {  ref, set } from "firebase/database";
+import { database } from './Firebase_setup';
 import { auth } from './Firebase_setup';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +15,7 @@ import MuiAlert from '@mui/material/Alert';
 import { useFormik } from "formik";
 import { Sign_in_schema } from "./Schemas";
 
+
 export default function Create_Account() {
   const [show, setshow] = React.useState(false);
   const [errorMessage,SeterrorMessage]=useState('')
@@ -20,11 +23,13 @@ export default function Create_Account() {
   const initialValues=
     {
         password : " ",
-        email : " "
+        email : " ",
+        username : " "
     }
     const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [user_id,setuserid]=useState('')
 
   const style = {
     position: 'absolute',
@@ -40,15 +45,23 @@ export default function Create_Account() {
   const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
   })
- 
+   const add_username=()=>{
+   
+   }
  
    const  Signup=(email,password)=> {
       createUserWithEmailAndPassword(auth,email, password)
     .then((userCredential) => {
       // Signed in 
       const user = userCredential.user;
-      alert(user)
+      set(ref(database, "Users"+"/"+user.uid), {
+        Name : values.username
+
+      });
       navigate("/user",{state:{current_user : user}})
+     
+
+
       // ...
     })
     .catch((error) => {
@@ -82,6 +95,7 @@ useFormik({
     //// to get rid of all the values after submitting the form
    ;
    Signup(values.email,values.password)
+   
     action.resetForm();
   },
 });
@@ -116,6 +130,12 @@ useFormik({
       <TextField name='email' onChange={handleChange}  value={values.email} type="email" id="email" label="Email" variant="outlined" />
       {touched.email && errors.email ? (
                       <p className="form-error">{errors.email}</p>
+                    ) : null}
+      </Grid>
+      <Grid item >
+      <TextField name='username' onChange={handleChange}  value={values.username} type="text" id="username" label="username" variant="outlined" />
+      {touched.username && errors.username ? (
+                      <p className="form-error">{errors.username}</p>
                     ) : null}
       </Grid>
       <Grid item>

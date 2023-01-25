@@ -9,12 +9,14 @@ export default function Navbar_inapp(props) {
  
   return (
     <Navbar bg="dark" variant="dark">
+      {console.log(props)}
     <Container>
       <Navbar.Brand href="#home">TaskManager</Navbar.Brand>
       <Nav className="me-auto">
         <Nav.Link >Tasks</Nav.Link>
-        <Nav.Link href="#features">Analysis</Nav.Link>
+        <Nav.Link >Analysis</Nav.Link>
         <Nav.Link onClick={props.signout}>Sign out</Nav.Link>
+        <Nav.Link >{props.username}</Nav.Link>
       </Nav>
     </Container>
   </Navbar>
