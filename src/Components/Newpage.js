@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { auth } from './Firebase_setup';
 import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@mui/material';
+import { Button, Select } from '@mui/material';
 import To_do from './To_do';
 import { database } from './Firebase_setup';
 import Tooltip from '@mui/material/Tooltip';
@@ -12,10 +12,11 @@ import  Cardview_Todos  from './Cardview_Todos';
 
 
 
-import {  ref, set,onValue,child,get, update } from "firebase/database";
+import {  ref, set,onValue,child,get, update, remove } from "firebase/database";
 import { Navbar } from 'react-bootstrap';
 
 export default function Newpage () {
+  const [count,SetCount]=useState(0)
   const [username,Setusername]=useState('')
   const tempi=[10,20,30,40,50,60]
   const [to_dos,setto_dos]=useState([])
@@ -44,7 +45,6 @@ useEffect(()=>{
   });
 },[])
 
-  
   useEffect(()=>{
     
     const dbRef = ref(database);
@@ -66,9 +66,23 @@ useEffect(()=>{
     });
 
   },[])
+ const handle_delete=(id)=>{
   
-  const component=to_dos.map((c,i)=> <Cardview_Todos key={i} Title={c.Title} Description={c.Description} 
-  Datetime={c.Datetime} status={c.status} id={c.id} />)
+    SetCount({count : count+1})
+remove(ref(database, 'Todos/' + userid+"/"+id))
+.then(() => {
+  console.log("The value of count is "+ count)
+
+  
+  // Data saved successfully!
+})
+.catch((error) => {
+  // The write failed...
+})
+
+  }
+  
+  const component=to_dos.map((c,i)=> <Cardview_Todos key={i} To_do={c} handle_delete={handle_delete}/>)
 
   return (
     <div>
