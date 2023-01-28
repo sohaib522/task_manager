@@ -14,13 +14,26 @@ import  Cardview_Todos  from './Cardview_Todos';
 
 import {  ref, set,onValue,child,get, update, remove } from "firebase/database";
 import { Navbar } from 'react-bootstrap';
+export const handle_delete=(id,userid)=>{
+  console.log(id+"    "+userid)
+  const dbRef = ref(database);
+  
+remove(ref(database, 'Todos/'+userid+"/"+id)).then(() => {
+    console.log("deleted")
+    window.location.reload();
+})
+.catch((error) => {
+  
+  console.log (error) // The write failed...
+});
+  
+  
+    }
 
 export default function Newpage () {
   const [count,SetCount]=useState(0)
   const [username,Setusername]=useState('')
-  const tempi=[10,20,30,40,50,60]
   const [to_dos,setto_dos]=useState([])
-  const temp=[];
   const location=useLocation();
   const userid=location.state.current_user
   const navigate=useNavigate()
@@ -35,29 +48,28 @@ export default function Newpage () {
   }
  
 useEffect(()=>{
-  const starCountRef = ref(database, 'Users/' + userid);
-  onValue(starCountRef, (snapshot) => {
+  const user_name = ref(database, 'Users/' + userid);
+  onValue(user_name, (snapshot) => {
     const data = snapshot.val();
 
-    Setusername(data.Name)
-   
-  
-  });
+    Setusername(data.Name)   
+  })
 },[])
+
 
   useEffect(()=>{
     
     const dbRef = ref(database);
     get(child(dbRef, `Todos/${userid}/`)).then((snapshot) => {
       if (snapshot.exists()) {
+        let temp=[]
         snapshot.forEach(function(child){
           var childkey=child.key;
           var childdata=child.val();
-         // console.log(childdata)
           temp.push(childdata)
         })
+      
         setto_dos(temp)
-        console.log(temp)
       } else {
         console.log("No data available");
       }
@@ -66,23 +78,25 @@ useEffect(()=>{
     });
 
   },[])
- const handle_delete=(id)=>{
-  
-    SetCount({count : count+1})
-remove(ref(database, 'Todos/' + userid+"/"+id))
-.then(() => {
-  console.log("The value of count is "+ count)
-
-  
-  // Data saved successfully!
-})
-.catch((error) => {
-  // The write failed...
-})
-
+  const Mark_complete=(id)=>
+  { console.log(id)
+    update(ref(database, 'Todos/'+userid+'/'+id), {
+     
+      status : "Completed"
+      
+       }).then(() => {
+          window.location.reload();
+        // Data saved successfully!
+      })
+      .catch((error) => {
+        
+        console.log (error) // The write failed...
+      });
+     
   }
+
   
-  const component=to_dos.map((c,i)=> <Cardview_Todos key={i} To_do={c} handle_delete={handle_delete}/>)
+  const component=to_dos.map((c,i)=> <Cardview_Todos key={i} To_do={c} userid={userid}   handle_delete={handle_delete} Mark_complete={Mark_complete} />)
 
   return (
     <div>

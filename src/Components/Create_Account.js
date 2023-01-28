@@ -50,6 +50,7 @@ export default function Create_Account() {
    }
  
    const  Signup=(email,password)=> {
+
       createUserWithEmailAndPassword(auth,email, password)
     .then((userCredential) => {
       // Signed in 
@@ -57,7 +58,12 @@ export default function Create_Account() {
       set(ref(database, "Users"+"/"+user.uid), {
         Name : values.username
 
-      });
+      }).then(() => {
+      console("data wrote sucessfully")  // Data saved successfully!
+      })
+      .catch((error) => {
+       console.log(error) // The write failed...
+      });;
       navigate("/user",{state:{current_user : user}})
      
 
