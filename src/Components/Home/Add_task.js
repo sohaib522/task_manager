@@ -25,7 +25,7 @@ export default function To_do(props) {
         title : '',
         description : '',
         status : 'incomplete', 
-        creation_date : new Date()
+        creation_date :  Date().toString()
         
 
     }
@@ -47,6 +47,7 @@ export default function To_do(props) {
         p: 4,
       };
       const Add_todo_in_database=(values)=>{
+        console.log(values.creation_date)
         var unique_id=uuid();
         var small_id=unique_id.slice(0,8)
         values["id"]=small_id
