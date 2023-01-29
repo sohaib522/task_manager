@@ -7,7 +7,7 @@ import {Typography} from "@mui/material";
 import {Button} from "@mui/material";
 import Create_Account from "./Create_Account";
 import { useNavigate} from "react-router-dom";
-import { auth } from "./Firebase_setup";
+import { auth } from "../Firebase_Api/Firebase_setup";
 import { signOut } from "firebase/auth";
 import Stack from '@mui/material/Stack';
 import Snackbar from '@mui/material/Snackbar';
@@ -29,34 +29,25 @@ const Alert = React.forwardRef(function Alert(props, ref) {
         password : " ",
         email : " "
     }
-    const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
-    useFormik({
-      initialValues,
-      validationSchema: Sign_in_schema,
-      validateOnChange: true,
-      validateOnBlur: false,
-      //// By disabling validation onChange and onBlur formik will validate on submit.
-      onSubmit: (values, action) => {
-        console.log("🚀 ~ file: App.jsx ~ line 17 ~ App ~ values", values);
-        //// to get rid of all the values after submitting the form
-       ;
-signInWithEmailAndPassword(auth,values.email,values.password)
-  .then((userCredential) => {
-  const user = userCredential.user;
-  navigate("/user",{state:{current_user : user}})
+    const Signin=(email,password)=>{
+  
+      signInWithEmailAndPassword(auth,email,password)
+    .then((userCredential) => {
+    const user = userCredential.user;
+    navigate("/user",{state:{current_user : user}})
     
     // ...
-  })
-  .catch((error) => {
+    })
+    .catch((error) => {
     const errorCode = error.code;
     const errorMessage = error.message;
+    console.log(errorMessage)
     SeterrorMessage(error.message)
     setOpen(true);
-
-  });
-        action.resetForm();
-      },
+    
     });
+    
+    }
     
     useEffect(()=>{
       auth.onAuthStateChanged(user=>{
@@ -75,16 +66,24 @@ const handleClose = (event, reason) => {
   setOpen(false)
 }
 
-const logout=()=>{
-  signOut(auth).then(() => {
-    // Sign-out successful.
-  }).catch((error) => {
-    // An error happened.
+
+
+const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
+  useFormik({
+    initialValues,
+    validationSchema: Sign_in_schema,
+    validateOnChange: true,
+    validateOnBlur: false,
+    //// By disabling validation onChange and onBlur formik will validate on submit.
+    onSubmit: (values, action) => {
+      console.log("🚀 ~ file: App.jsx ~ line 17 ~ App ~ values", values);
+      Signin(values.email,values.password)
+      //// to get rid of all the values after submitting the form
+      action.resetForm();
+    },
   });
 
-}
-  
-
+console.log(errors);
   return (
     <div>
        <br/>
@@ -105,13 +104,13 @@ const logout=()=>{
       </Typography>
         </Grid>
         <Grid item >
-      <TextField sx={{width : "3"}} onChange={handleChange}  onBlur={handleBlur} value={values.email} type="email" id="email" label="Email" variant="outlined" name="email" />
+      <TextField sx={{width : "3"}} onChange={handleChange}  value={values.email} type="email" id="email" label="Email" variant="outlined" name="email" />
       {touched.email && errors.email ? (
                       <p className="form-error">{errors.email}</p>
                     ) : null}
       </Grid>
       <Grid item>
-      <TextField onChange={handleChange} onBlur={handleBlur} value={values.password} type="password" id="password" label="Password" variant="outlined" name="password" />
+      <TextField onChange={handleChange}  value={values.password} type="password" id="password" label="Password" variant="outlined" name="password" />
       {touched.password && errors.password ? (
                       <p className="form-error">{errors.password}</p>
                     ) : null}
@@ -125,9 +124,9 @@ const logout=()=>{
     
       </Grid>
       </Grid>
-
-      </form>
-      <button onClick={logout}>signout</button>
+</form>
+    
+  
     </div>
    
   )

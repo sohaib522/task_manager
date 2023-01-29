@@ -5,8 +5,8 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { TextField } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { auth } from './Firebase_setup';
-import { database } from './Firebase_setup';
+import { auth } from '../Firebase_Api/Firebase_setup';
+import { database } from '../Firebase_Api/Firebase_setup';
 import {  ref, set } from "firebase/database";
 import {v4 as uuid} from 'uuid'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';

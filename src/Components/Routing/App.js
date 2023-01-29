@@ -1,7 +1,7 @@
-import logo from './logo.svg';
+
 import './App.css';
-import Email_Auth from './Components/Email_Auth';
-import Newpage from './Components/Newpage'
+import Login_page from "../User_Authentication/Login_page"
+import Home from "../Home/Home"
 import { BrowserRouter,Route,Routes } from 'react-router-dom';
 
 function App() {
@@ -9,8 +9,8 @@ function App() {
     <div className="App">
         <BrowserRouter>
    <Routes>
-    <Route  path='/' element={<Email_Auth/>} />
-    <Route  path='/user' element={<Newpage/>} />
+    <Route  path='/' element={<Login_page/>} />
+    <Route  path='/user' element={<Home/>} />
    </Routes>
    </BrowserRouter>
     </div>

@@ -5,8 +5,8 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Grid,  TextField } from "@mui/material";
 import {  ref, set } from "firebase/database";
-import { database } from './Firebase_setup';
-import { auth } from './Firebase_setup';
+import { database } from '../Firebase_Api/Firebase_setup';
+import { auth } from '../Firebase_Api/Firebase_setup';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
@@ -45,10 +45,6 @@ export default function Create_Account() {
   const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
   })
-   const add_username=()=>{
-   
-   }
- 
    const  Signup=(email,password)=> {
 
       createUserWithEmailAndPassword(auth,email, password)
@@ -62,8 +58,10 @@ export default function Create_Account() {
       console("data wrote sucessfully")  // Data saved successfully!
       })
       .catch((error) => {
-       console.log(error) // The write failed...
-      });;
+       console.log(error)
+       SeterrorMessage(error.message)
+       setshow(true); // The write failed...
+      });
       navigate("/user",{state:{current_user : user}})
      
 
