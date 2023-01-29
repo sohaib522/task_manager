@@ -14,19 +14,21 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import {Grid} from '@mui/material';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import { useFormik } from "formik";
+import { To_do_Schema } from '../User_Authentication/Schemas';
 export default function To_do(props) {
   const [Date_time,setDate_time]=useState('2022-12-18T21:11:54')
   const [show, setshow] = React.useState(false);
   const [errorMessage,SeterrorMessage]=useState('')
   const [error_state,SetErrorState]=useState(null)
-    const [Task,setTask]=useState({
+    const initialValues={
         title : '',
         description : '',
         status : 'incomplete', 
         creation_date : new Date()
         
 
-    })
+    }
    
     const user=props.current_user
     const [open, setOpen] = React.useState(false);
@@ -44,20 +46,20 @@ export default function To_do(props) {
         boxShadow: 24,
         p: 4,
       };
-
-    const handlesubmit=(e)=>{
-        e.preventDefault();
+      const Add_todo_in_database=(values)=>{
         var unique_id=uuid();
         var small_id=unique_id.slice(0,8)
-        Task["id"]=small_id
-        Task["Date_time"]=Date_time
-        setTask(Task)
+        values["id"]=small_id
+        values["Date_time"]=Date_time
         set(ref(database, 'Todos/'+user+'/'+small_id), {
-        Title : Task.title  ,
-        Description : Task.description, 
-        id : Task.id ,
-        status : Task.status,
-        Datetime : Task.Date_time 
+        Creationdate : values.creation_date,
+        Title : values.title  ,
+        Description : values.description, 
+        id : values.id ,
+        status : values.status,
+        Completiondate : values.Date_time
+       
+
         
          }).then(() => {
           SetErrorState(false)
@@ -69,15 +71,11 @@ export default function To_do(props) {
           // The write failed...
         });
         console.log ("The new values are : ")
-    }
-    const handlechange=(event)=>
-    {      var unique_id=uuid();
-      var small_id=unique_id.slice(0,8)
-        let name ,value,temp;
-      name=event.target.name
-      value=event.target.value
-           setTask({...Task,[name] : value})
-    }
+
+      }
+
+  
+ 
     const handleClosed = (event, reason) => {
       if (reason === "clickaway") {
         return
@@ -93,6 +91,23 @@ export default function To_do(props) {
     const Alert = React.forwardRef(function Alert(props, ref) {
       return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
     })
+    const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
+  useFormik({
+    initialValues,
+    validationSchema: To_do_Schema,
+    validateOnChange: true,
+    validateOnBlur: false,
+    //// By disabling validation onChange and onBlur formik will validate on submit.
+    onSubmit: (values, action) => {
+      console.log("🚀 ~ file: App.jsx ~ line 17 ~ App ~ values", values);
+      //Signin(values.email,values.password)
+      //// to get rid of all the values after submitting the form
+      Add_todo_in_database(values)
+      action.resetForm();
+    },
+  });
+
+console.log(errors);
   return (
     <div>
        
@@ -107,7 +122,7 @@ export default function To_do(props) {
   aria-describedby="modal-modal-description"
 >
   
-<form onSubmit={handlesubmit}>
+<form onSubmit={handleSubmit}>
   <Box sx={style}>
   <Grid container display="flex" direction="column" align="center" spacing={4}>
     <Grid item>
@@ -116,7 +131,10 @@ export default function To_do(props) {
       </Typography>
     </Grid>
     <Grid item>
-    <TextField  id="title" name="title" label="Title" variant="outlined"  onChange={handlechange}/>
+    <TextField  id="title" name="title" label="Title" variant="outlined"  onChange={handleChange}/>
+    {touched.title && errors.title ? (
+                      <p className="form-error">{errors.title}</p>
+                    ) : null}
     </Grid>
     <Grid item>
     <TextField
@@ -125,8 +143,11 @@ export default function To_do(props) {
           label="Description"
           multiline
           maxRows={4}
-          onChange={handlechange}
+          onChange={handleChange}
         />
+         {touched.description && errors.description ? (
+                      <p className="form-error">{errors.description}</p>
+                    ) : null}
     </Grid>
     <Grid item>
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -134,13 +155,13 @@ export default function To_do(props) {
           label="Date&Time picker"
           name="date_time"
           value={Date_time}
-          onChange={handledate}
+          onChange={handleChange}
           renderInput={(params) => <TextField {...params} />}
         />
         </LocalizationProvider>
     </Grid>
       <Grid item>
-      <Button type="submit" onClick={handlesubmit}>Add task</Button>
+      <Button type="submit" >Add task</Button>
       </Grid>
       </Grid>
   </Box>
