@@ -117,14 +117,8 @@ useFormik({
 >
   <Box sx={style}>
        <br/>
-       <br/>
-       <br/>
-
-       <br/>
-       <br/>
-       <br/>
        <form  onSubmit={handleSubmit}>
-       <Grid container display="flex" direction="column" align="center" spacing={8}>
+       <Grid container display="flex" direction="column" align="center" spacing={6}>
         <Grid item >
         <Typography variant="h5" gutterBottom>
         Please Create New Account

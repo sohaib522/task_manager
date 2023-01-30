@@ -7,8 +7,8 @@ export const Sign_in_schema = Yup.object({
   });
   export const To_do_Schema = Yup.object({
   
-    title:Yup.string().min(3).max(30).required("Please Enter Title"),
-    description : Yup.string().min(3).max(60).required("Please Enter Description")
+    Title:Yup.string().min(3).max(30).required("Please Enter Title"),
+    Description : Yup.string().min(3).max(60).required("Please Enter Description")
 
   });
   

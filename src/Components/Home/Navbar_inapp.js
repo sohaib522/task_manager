@@ -9,7 +9,6 @@ export default function Navbar_inapp(props) {
  
   return (
     <Navbar bg="dark" variant="dark">
-      {console.log(props)}
     <Container>
       <Navbar.Brand href="#home">TaskManager</Navbar.Brand>
       <Nav className="me-auto">

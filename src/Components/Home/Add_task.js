@@ -15,21 +15,23 @@ import {Grid} from '@mui/material';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { useFormik } from "formik";
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { To_do_Schema } from '../User_Authentication/Schemas';
 export default function To_do(props) {
-  const [Date_time,setDate_time]=useState('2022-12-18T21:11:54')
+  const current_date=new Date()
+  const [date,setDate]=useState(current_date.toDateString())
   const [show, setshow] = React.useState(false);
   const [errorMessage,SeterrorMessage]=useState('')
   const [error_state,SetErrorState]=useState(null)
+ 
     const initialValues={
-        title : '',
-        description : '',
-        status : 'incomplete', 
-        creation_date :  Date().toString()
+        Title : '',
+        Description : '',
+        Status : 'Incomplete', 
+        Creationdate : current_date.toDateString()
         
 
     }
-   
     const user=props.current_user
     const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -46,34 +48,7 @@ export default function To_do(props) {
         boxShadow: 24,
         p: 4,
       };
-      const Add_todo_in_database=(values)=>{
-        console.log(values.creation_date)
-        var unique_id=uuid();
-        var small_id=unique_id.slice(0,8)
-        values["id"]=small_id
-        values["Date_time"]=Date_time
-        set(ref(database, 'Todos/'+user+'/'+small_id), {
-        Creationdate : values.creation_date,
-        Title : values.title  ,
-        Description : values.description, 
-        id : values.id ,
-        status : values.status,
-        Completiondate : values.Date_time
-       
-
-        
-         }).then(() => {
-          SetErrorState(false)
-          // Data saved successfully!
-        })
-        .catch((error) => {
-          SeterrorMessage(error)
-          SetErrorState(true)
-          // The write failed...
-        });
-        console.log ("The new values are : ")
-
-      }
+    
 
   
  
@@ -86,7 +61,7 @@ export default function To_do(props) {
     }
     const handledate=(date)=>{
      
-     setDate_time(date)
+     setDate(date)
 
     }
     const Alert = React.forwardRef(function Alert(props, ref) {
@@ -103,7 +78,8 @@ export default function To_do(props) {
       console.log("🚀 ~ file: App.jsx ~ line 17 ~ App ~ values", values);
       //Signin(values.email,values.password)
       //// to get rid of all the values after submitting the form
-      Add_todo_in_database(values)
+      values["Completiondate"]=date.toString();
+      props.Add_todo_in_database(values)
       action.resetForm();
     },
   });
@@ -132,31 +108,32 @@ console.log(errors);
       </Typography>
     </Grid>
     <Grid item>
-    <TextField  id="title" name="title" label="Title" variant="outlined"  onChange={handleChange}/>
+    <TextField  id="Title" value={values.Title} name="Title" label="Title" variant="outlined"  onChange={handleChange}/>
     {touched.title && errors.title ? (
                       <p className="form-error">{errors.title}</p>
                     ) : null}
     </Grid>
     <Grid item>
     <TextField
-          id="description"
-          name="description"
+          id="Description"
+          name="Description"
+          value={values.Description}
           label="Description"
           multiline
           maxRows={4}
           onChange={handleChange}
         />
          {touched.description && errors.description ? (
-                      <p className="form-error">{errors.description}</p>
+                      <p className="form-error">{errors.Description}</p>
                     ) : null}
     </Grid>
     <Grid item>
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-           <DateTimePicker
-          label="Date&Time picker"
-          name="date_time"
-          value={Date_time}
-          onChange={handleChange}
+    <DesktopDatePicker
+          label="Select Date"
+          inputFormat="YYYY/MM/DD"
+          value={date}
+          onChange={handledate}
           renderInput={(params) => <TextField {...params} />}
         />
         </LocalizationProvider>
