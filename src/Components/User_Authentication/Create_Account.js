@@ -28,7 +28,6 @@ export default function Create_Account() {
         email : "",
         username : ""
     }
-    console.log(".........."+initialValues.password)
     const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -59,10 +58,10 @@ export default function Create_Account() {
         Name : values.username
 
       }).then(() => {
-      console("data wrote sucessfully")  // Data saved successfully!
+     // Data saved successfully!
       })
       .catch((error) => {
-       console.log(error)
+    
        SeterrorMessage(error.message)
        setshow(true); 
        // The write failed...
@@ -103,7 +102,7 @@ useFormik({
   validateOnBlur: false,
   //// By disabling validation onChange and onBlur formik will validate on submit.
   onSubmit: (values, action) => {
-    console.log("🚀 ~ file: App.jsx ~ line 17 ~ App ~ values", values);
+    //console.log("🚀 ~ file: App.jsx ~ line 17 ~ App ~ values", values);
     //// to get rid of all the values after submitting the form
    ;
    Signup(values.email,values.password)

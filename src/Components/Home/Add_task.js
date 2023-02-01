@@ -75,16 +75,16 @@ export default function To_do(props) {
     validateOnBlur: false,
     //// By disabling validation onChange and onBlur formik will validate on submit.
     onSubmit: (values, action) => {
-      console.log("🚀 ~ file: App.jsx ~ line 17 ~ App ~ values", values);
+     // console.log("🚀 ~ file: App.jsx ~ line 17 ~ App ~ values", values);
       //Signin(values.email,values.password)
       //// to get rid of all the values after submitting the form
       values["Completiondate"]=date.toString();
       props.Add_todo_in_database(values)
-      action.resetForm();
+      //action.resetForm();
     },
   });
 
-console.log(errors);
+//console.log(errors);
   return (
     <div>
        

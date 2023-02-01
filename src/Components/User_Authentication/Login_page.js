@@ -44,7 +44,6 @@ const Alert = React.forwardRef(function Alert(props, ref) {
     .catch((error) => {
     const errorCode = error.code;
     const errorMessage = error.message;
-    console.log(errorMessage)
     SeterrorMessage(error.message)
     setOpen(true);
     
@@ -83,7 +82,7 @@ const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
     validateOnBlur: false,
     //// By disabling validation onChange and onBlur formik will validate on submit.
     onSubmit: (values, action) => {
-      console.log("🚀 ~ file: App.jsx ~ line 17 ~ App ~ values", values);
+     // console.log("🚀 ~ file: App.jsx ~ line 17 ~ App ~ values", values);
       Signin(values.email,values.password)
       //// to get rid of all the values after submitting the form
       action.resetForm();
