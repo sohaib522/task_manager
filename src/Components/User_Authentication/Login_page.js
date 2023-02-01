@@ -14,11 +14,13 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { useFormik } from "formik";
 import { Sign_in_schema } from "./Schemas";
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 export default function Email_Auth() {
   const [open, setOpen] = React.useState(false);
   const [errorMessage,SeterrorMessage]=useState('')
+  const [progressbar,Setprogressbar]=useState(true)
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -30,10 +32,11 @@ const Alert = React.forwardRef(function Alert(props, ref) {
         email : " "
     }
     const Signin=(email,password)=>{
-  
+      Setprogressbar(true)
       signInWithEmailAndPassword(auth,email,password)
     .then((userCredential) => {
     const user = userCredential.user;
+    Setprogressbar(false)
     navigate("/user",{state:{current_user : user}})
     
     // ...
@@ -52,8 +55,12 @@ const Alert = React.forwardRef(function Alert(props, ref) {
     useEffect(()=>{
       auth.onAuthStateChanged(user=>{
         if(user){
+        Setprogressbar(false)
         navigate("/user",{state :{current_user : user.uid}})
-    }})
+    }
+  else {
+    Setprogressbar(false)
+  }})
     },[])
   
     
@@ -98,6 +105,13 @@ console.log(errors);
       </Snackbar>
        <form onSubmit={handleSubmit} >
        <Grid container display="flex" direction="column" align="center" spacing={8}>
+       <Grid item>
+      {progressbar?
+      <Box sx={{ display: 'flex',justifyContent : 'center',height : '10vh'}}>
+      <CircularProgress sx={{width : '50%'}}/>
+    </Box>
+: ""}
+      </Grid>
         <Grid item >
         <Typography variant="h5" gutterBottom>
         Please Sign into your Account
@@ -115,6 +129,7 @@ console.log(errors);
                       <p className="form-error">{errors.password}</p>
                     ) : null}
       </Grid>
+     
 
         <Grid item >
         <Button type="submit" variant="contained">Sign in</Button>

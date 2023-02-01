@@ -16,16 +16,19 @@ import MuiAlert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import Snackbar from '@mui/material/Snackbar';
 import {Typography} from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import { Box, width } from '@mui/system';
 
 
 import {  ref, set,onValue,child,get, update, remove } from "firebase/database";
 import { Navbar } from 'react-bootstrap';
 
 
-export default function Home() {
+export default function Home() { 
+  const [progressbar ,setProgressbar]=useState(true)
   const [count,SetCount]=useState(0)
   const [username,Setusername]=useState('')
-  const [reload,Setreload]=useState(false)
+  const [reload,Setreload]=useState(true)
   const [to_dos,setto_dos]=useState([])
   const [errorAlert, seterror_Alert] = React.useState(false);
   const [SucessAlert, setSucessAlert] = React.useState(false);
@@ -72,9 +75,11 @@ console.log(data)
           var childdata=child.val();
           temp.push(childdata)
         })
+        setProgressbar(false)
       
         setto_dos(temp)
       } else {
+        setProgressbar(false)
         console.log("No data available");
       }
     }).catch((error) => {
@@ -187,6 +192,11 @@ console.log(data)
         Welcome,   {username}
       </Typography>
       <Add_task current_user={userid} Add_todo_in_database={Add_todo_in_database}/>
+      {progressbar?
+      <Box sx={{ display: 'flex',justifyContent : 'center',height : '100vh'}}>
+      <CircularProgress sx={{width : '50%'}}/>
+    </Box>
+: ""}
        <>{component}</>  
 
     </div>

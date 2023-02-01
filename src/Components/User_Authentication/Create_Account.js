@@ -14,18 +14,21 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { useFormik } from "formik";
 import { Sign_in_schema } from "./Schemas";
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 export default function Create_Account() {
+  const [progressbar,setProgressbar]=useState(false)
   const [show, setshow] = React.useState(false);
   const [errorMessage,SeterrorMessage]=useState('')
   const navigate=useNavigate();
   const initialValues=
     {
-        password : " ",
-        email : " ",
-        username : " "
+        password : "",
+        email : "",
+        username : ""
     }
+    console.log(".........."+initialValues.password)
     const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -46,6 +49,7 @@ export default function Create_Account() {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
   })
    const  Signup=(email,password)=> {
+    setProgressbar(true)
 
       createUserWithEmailAndPassword(auth,email, password)
     .then((userCredential) => {
@@ -60,8 +64,10 @@ export default function Create_Account() {
       .catch((error) => {
        console.log(error)
        SeterrorMessage(error.message)
-       setshow(true); // The write failed...
+       setshow(true); 
+       // The write failed...
       });
+      setProgressbar(false);
       navigate("/user",{state:{current_user : user}})
      
 
@@ -69,17 +75,19 @@ export default function Create_Account() {
       // ...
     })
     .catch((error) => {
+      setProgressbar(false)
       const errorCode = error.code;
       const errorMessage = error.message;
       SeterrorMessage(error.message)
       setshow(true);
       // ..
     });
+    
   }
-
 
 const handleClosed = (event, reason) => {
   if (reason === "clickaway") {
+    SeterrorMessage('')
     return
   }
 
@@ -105,9 +113,10 @@ useFormik({
 });
   return (
     <div>
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClosed}>
+       <Snackbar open={open} autoHideDuration={10} onClose={handleClosed}>
        <Alert severity="error">{errorMessage}</Alert>
       </Snackbar>
+     
         <Button variant="contained" onClick={handleOpen}>Create New Account</Button>
 <Modal
   open={open}
@@ -142,6 +151,14 @@ useFormik({
                       <p className="form-error">{errors.password}</p>
                     ) : null}
       </Grid>
+      <Grid item>
+      {progressbar?
+      <Box sx={{ display: 'flex',justifyContent : 'center',height : '10vh'}}>
+      <CircularProgress sx={{width : '50%'}}/>
+    </Box>
+: ""}
+
+      </Grid>
     
 
         <Grid item >
@@ -151,6 +168,7 @@ useFormik({
       </Grid>
 
       </form>
+      
   </Box>
 </Modal>
     </div>
