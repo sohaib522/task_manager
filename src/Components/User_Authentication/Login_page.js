@@ -42,6 +42,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
     // ...
     })
     .catch((error) => {
+      Setprogressbar(false)
     const errorCode = error.code;
     const errorMessage = error.message;
     SeterrorMessage(error.message)
